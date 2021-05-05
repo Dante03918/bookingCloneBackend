@@ -1,16 +1,16 @@
 package securitybasicauth.demo;
 
-public class LoginModelUser {
+public class LoginUserModel {
 
     private String email;
     private String password;
 
-    public LoginModelUser(String email, String password) {
+    public LoginUserModel(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public LoginModelUser() {
+    public LoginUserModel() {
     }
 
     public String getEmail() {

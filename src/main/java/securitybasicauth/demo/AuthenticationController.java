@@ -6,11 +6,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import securitybasicauth.demo.repositories.RegisterUserRepo;
 
 
 @RestController
 public class AuthenticationController {
 
+    @Autowired
+    RegisterUserRepo registerUserRepo;
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -20,11 +23,12 @@ public class AuthenticationController {
 
     @CrossOrigin
     @PostMapping("/login")
-    public ResponseEntity<?> logIn(@RequestBody LoginModelUser loginModelUser) throws Exception {
+    public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {
 
-        authenticate(loginModelUser.getEmail(), loginModelUser.getPassword());
+        authenticate(loginUserModel.getEmail(), loginUserModel.getPassword());
 
-       String token =  jwtTokenUtil.generateToken(loginModelUser.getEmail());
+       String token =  jwtTokenUtil.generateToken(loginUserModel.getEmail());
+
         return ResponseEntity.ok(token);
     }
 
