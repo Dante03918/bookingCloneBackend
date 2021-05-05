@@ -20,11 +20,11 @@ public class AuthenticationController {
 
     @CrossOrigin
     @PostMapping("/login")
-    public ResponseEntity<?> logIn(@RequestBody User user) throws Exception {
+    public ResponseEntity<?> logIn(@RequestBody LoginModelUser loginModelUser) throws Exception {
 
-        authenticate(user.getUser(), user.getPassword());
+        authenticate(loginModelUser.getEmail(), loginModelUser.getPassword());
 
-       String token =  jwtTokenUtil.generateToken(user.getUser());
+       String token =  jwtTokenUtil.generateToken(loginModelUser.getEmail());
         return ResponseEntity.ok(token);
     }
 
