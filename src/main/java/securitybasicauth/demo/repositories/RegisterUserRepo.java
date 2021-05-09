@@ -12,4 +12,9 @@ public interface RegisterUserRepo extends CrudRepository<RegisterUserModel, Inte
 
     @Override
     <S extends RegisterUserModel> S save(S s);
+
+    boolean existsByEmail(String email);
+
+//     RegisterUserModel loadByEmail(String email);
+
 }

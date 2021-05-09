@@ -11,6 +11,7 @@ public class RegisterUserModel {
     @Column(name = "id")
     private int id;
 
+
     @Column(name = "name")
     private String name;
 
@@ -26,15 +27,23 @@ public class RegisterUserModel {
     @Column(name = "age")
     private int age;
 
+    @Column(name = "password")
+    private String password;
+
     public RegisterUserModel() {
     }
 
-    public int getId() {
-        return id;
+//    public int getId() {
+//        return id;
+//    }
+
+
+    public String getPassword() {
+        return password;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getName() {

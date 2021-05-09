@@ -1,6 +1,9 @@
 package securitybasicauth.demo;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.h2.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -42,4 +45,24 @@ public class AuthenticationController {
     }
 
 
+    @CrossOrigin
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@RequestBody RegisterUserModel registerUserModel){
+
+
+        Boolean exists = registerUserRepo.existsByEmail(registerUserModel.getEmail());
+
+         String result;
+        HttpStatus httpStatus;
+
+        if(!exists){
+            registerUserRepo.save(registerUserModel);
+            result = "User created";
+            httpStatus = HttpStatus.OK;
+        } else {
+            result = "User alredy exists";
+            httpStatus = HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity(result, httpStatus);
+    }
 }

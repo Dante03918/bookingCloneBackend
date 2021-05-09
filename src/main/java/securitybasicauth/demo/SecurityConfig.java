@@ -19,13 +19,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser(User.builder()
-                .username("dante@dante.pl")
-                .password(passwordEncoder().encode("dantedante"))
-                .roles("ADMN"));
+
 
     }
 
@@ -39,14 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/", "/login", "/h2-console/**").permitAll()
+                .authorizeRequests().antMatchers("/", "/login", "/h2-console/**", "/signup").permitAll()
                 .anyRequest().authenticated();
 
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+
 }
