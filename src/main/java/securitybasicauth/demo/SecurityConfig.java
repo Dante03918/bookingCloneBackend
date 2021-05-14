@@ -14,6 +14,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
 
 import javax.sql.DataSource;
@@ -28,10 +32,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    JwtFilter jwtFilter;
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    protected CorsConfigurationSource corsConfigurationSource(){
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+        return source;
     }
 
     @Override
@@ -48,9 +62,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/", "/login", "/h2-console/**", "/signup").permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+
 
     }
 

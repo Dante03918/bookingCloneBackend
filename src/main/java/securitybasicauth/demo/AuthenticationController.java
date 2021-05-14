@@ -1,8 +1,5 @@
 package securitybasicauth.demo;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import jdk.internal.dynalink.support.NameCodec;
-import org.h2.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -15,9 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
-import sun.security.util.Password;
 
+import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin
 @RestController
 public class AuthenticationController {
 
@@ -38,7 +36,7 @@ public class AuthenticationController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    @CrossOrigin
+
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {
 
@@ -58,13 +56,10 @@ public class AuthenticationController {
         }
     }
 
-
-    @CrossOrigin
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody RegisterUserModel registerUserModel){
 
-
-        Boolean exists = registerUserRepo.existsByEmail(registerUserModel.getEmail());
+        boolean exists = registerUserRepo.existsByEmail(registerUserModel.getEmail());
 
          String result;
         HttpStatus httpStatus;
@@ -79,8 +74,21 @@ public class AuthenticationController {
             result = "User alredy exists";
             httpStatus = HttpStatus.BAD_REQUEST;
         }
+
         return new ResponseEntity(result, httpStatus);
     }
 
+
+    @GetMapping("/token")
+    public ResponseEntity validateToken(HttpServletRequest request) {
+       String token = request.getHeader("Authorization");
+
+       String cleanToken = token.substring(7);
+       String username = jwtTokenUtil.getUsernameFromToken(cleanToken);
+       if(jwtTokenUtil.validateToken(cleanToken, username)){
+           return ResponseEntity.ok("Token prawidłowy");
+       }
+       return ResponseEntity.badRequest().build();
+    }
 
 }

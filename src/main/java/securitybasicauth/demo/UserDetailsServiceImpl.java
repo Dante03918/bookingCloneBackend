@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         RegisterUserModel userModel = userRepo.findByEmail(email);
 
 
-        UserDetails user = User.withUsername(userModel.getUsername())
+        return User.withUsername(userModel.getEmail())
                 .password(userModel.getPassword())
                 .disabled(false)
                 .accountExpired(false)
@@ -27,7 +27,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .accountLocked(false)
                 .authorities("USER")
                 .build();
-
-        return user;
     }
 }

@@ -11,7 +11,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "users")
-public class RegisterUserModel implements UserDetails {
+public class RegisterUserModel {
 
     @Id
     @GeneratedValue
@@ -40,48 +40,15 @@ public class RegisterUserModel implements UserDetails {
     public RegisterUserModel() {
     }
 
-//    public int getId() {
-//        return id;
-//    }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public int getId() {
+        return id;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getPassword(){return password; }
 
     public String getName() {
         return name;
