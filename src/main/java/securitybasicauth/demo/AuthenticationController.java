@@ -2,6 +2,7 @@ package securitybasicauth.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,17 +41,19 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {
 
-        authenticate(loginUserModel.getEmail(), loginUserModel.getPassword());
 
-       String token =  jwtTokenUtil.generateToken(loginUserModel.getEmail());
-
-        return ResponseEntity.ok(token);
+        if(authenticate(loginUserModel.getEmail(), loginUserModel.getPassword())){
+             String  token =  jwtTokenUtil.generateToken(loginUserModel.getEmail());
+            return ResponseEntity.ok(token);
+           } else {
+            return ResponseEntity.notFound().headers(HttpHeaders.EMPTY).build();
+        }
     }
 
-    private void authenticate(String email, String password) throws Exception {
+    private boolean authenticate(String email, String password) throws Exception {
         try{
-          Authentication result = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            System.out.println(result);
+          authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            return true;
         } catch(BadCredentialsException badCredentialsException){
             throw new Exception("Bad Credentials", badCredentialsException);
         }
@@ -71,7 +74,7 @@ public class AuthenticationController {
             result = "User created";
             httpStatus = HttpStatus.OK;
         } else {
-            result = "User alredy exists";
+            result = "User already exists";
             httpStatus = HttpStatus.BAD_REQUEST;
         }
 
