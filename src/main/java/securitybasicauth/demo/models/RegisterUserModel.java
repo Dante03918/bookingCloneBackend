@@ -1,12 +1,14 @@
-package securitybasicauth.demo;
+package securitybasicauth.demo.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 
 @Entity
@@ -18,6 +20,20 @@ public class RegisterUserModel {
     @Column(name = "id")
     private int id;
 
+
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ownerId")
+    private List<AccommodationsModel> accommodations = new ArrayList<>();
+
+
+    public List<AccommodationsModel> getAccommodations() {
+        return accommodations;
+    }
+
+    public void setAccommodations(List<AccommodationsModel> accommodations) {
+        this.accommodations = accommodations;
+    }
 
     @Column(name = "name")
     private String name;
@@ -38,6 +54,10 @@ public class RegisterUserModel {
     private String password;
 
     public RegisterUserModel() {
+    }
+
+    public RegisterUserModel(List<AccommodationsModel> accommodations) {
+        this.accommodations = accommodations;
     }
 
     public int getId() {

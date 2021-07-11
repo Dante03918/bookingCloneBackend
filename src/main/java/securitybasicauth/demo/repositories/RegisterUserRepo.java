@@ -1,10 +1,8 @@
 package securitybasicauth.demo.repositories;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import securitybasicauth.demo.RegisterUserModel;
+import securitybasicauth.demo.models.RegisterUserModel;
 
 
 @Repository

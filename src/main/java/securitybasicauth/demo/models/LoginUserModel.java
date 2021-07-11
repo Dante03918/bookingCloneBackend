@@ -1,4 +1,4 @@
-package securitybasicauth.demo;
+package securitybasicauth.demo.models;
 
 public class LoginUserModel {
 
