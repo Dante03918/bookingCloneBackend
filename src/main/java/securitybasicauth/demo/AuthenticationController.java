@@ -15,9 +15,6 @@ import securitybasicauth.demo.models.LoginUserModel;
 import securitybasicauth.demo.models.RegisterUserModel;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
 
-import javax.servlet.http.HttpServletRequest;
-
-//@CrossOrigin
 @RestController
 public class AuthenticationController {
 
@@ -83,16 +80,6 @@ public class AuthenticationController {
     }
 
 
-    @GetMapping("/token")
-    public ResponseEntity validateToken(HttpServletRequest request) {
-       String token = request.getHeader("Authorization");
 
-       String cleanToken = token.substring(7);
-       String username = jwtTokenUtil.getUsernameFromToken(cleanToken);
-       if(jwtTokenUtil.validateToken(cleanToken, username)){
-           return ResponseEntity.ok("Token prawidłowy");
-       }
-       return ResponseEntity.badRequest().build();
-    }
 
 }
