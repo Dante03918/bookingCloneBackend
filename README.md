@@ -5,6 +5,10 @@ Backend for booking-clone written with Java. This app have five endpoints:
 4) /removeAccommodation endpoint for removing ad from database.
 5) /book - here is place for checking availability and book the term if free.
 
+Authentication based on JWT, database is in memory H2. 
+
+
+
 
 # bookingCloneBackend
 
