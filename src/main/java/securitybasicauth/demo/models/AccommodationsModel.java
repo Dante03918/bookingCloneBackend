@@ -1,6 +1,7 @@
 package securitybasicauth.demo.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class AccommodationsModel {
@@ -14,6 +15,10 @@ public class AccommodationsModel {
     private String imageUrl;
     private String description;
     private long price;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "accommodationId")
+    private List<DatesModel> reservations;
 
 
     public int getId() {
@@ -62,5 +67,13 @@ public class AccommodationsModel {
 
     public void setPrice(long price) {
         this.price = price;
+    }
+
+    public List<DatesModel> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<DatesModel> reservations) {
+        this.reservations = reservations;
     }
 }
