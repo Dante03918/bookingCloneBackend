@@ -24,7 +24,7 @@ public class RegisterUserModel {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ownerId")
-    private List<AccommodationsModel> accommodations = new ArrayList<>();
+    private List<AccommodationsModel> accommodations;
 
 
     public List<AccommodationsModel> getAccommodations() {

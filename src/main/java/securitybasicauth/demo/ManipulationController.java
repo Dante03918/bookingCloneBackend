@@ -14,6 +14,7 @@ import securitybasicauth.demo.repositories.ReservationsRepo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -87,32 +88,32 @@ public class ManipulationController {
             e.printStackTrace();
         }
 
-        List<DatesModel> reservations = accommodationsModel.getReservations();
+//        List<DatesModel> reservations = accommodationsModel.getReservations();
 
 
-        if (reservations.size() == 0) {
-
-            reservationsRepo.save(dates);
-
-            reservations.add(dates);
-            return new ResponseEntity("Reserved", HttpStatus.OK);
-        } else {
-            for (DatesModel model : reservations) {
-                Date startDate = model.getStartDate();
-                Date endDate = model.getEndDate();
-
-                if ((dates.getStartDate().after(startDate)) &&
-                        (dates.getStartDate().before(endDate)) ||
-                        (dates.getEndDate().after(startDate)) &&
-                                (dates.getEndDate().before(endDate))) {
-                    return new ResponseEntity("Term already booked", HttpStatus.OK);
-                } else {
-                    reservationsRepo.save(dates);
-                    reservations.add(dates);
-                    return new ResponseEntity("Reserved", HttpStatus.OK);
-                }
-            }
-        }
+//        if (reservations.size() == 0) {
+//
+//            reservationsRepo.save(dates);
+//
+//            reservations.add(dates);
+//            return new ResponseEntity("Reserved", HttpStatus.OK);
+//        } else {
+//            for (DatesModel model : reservations) {
+//                Date startDate = model.getStartDate();
+//                Date endDate = model.getEndDate();
+//
+//                if ((dates.getStartDate().after(startDate)) &&
+//                        (dates.getStartDate().before(endDate)) ||
+//                        (dates.getEndDate().after(startDate)) &&
+//                                (dates.getEndDate().before(endDate))) {
+//                    return new ResponseEntity("Term already booked", HttpStatus.OK);
+//                } else {
+//                    reservationsRepo.save(dates);
+//                    reservations.add(dates);
+//                    return new ResponseEntity("Reserved", HttpStatus.OK);
+//                }
+//            }
+//        }
         return null;
     }
 }
