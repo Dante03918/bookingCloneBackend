@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import securitybasicauth.demo.models.AccommodationsModel;
 
 @Repository
-public interface AccommodationRepo extends JpaRepository<AccommodationsModel, Integer> {
+public interface AccommodationRepo extends CrudRepository<AccommodationsModel, Integer> {
 }

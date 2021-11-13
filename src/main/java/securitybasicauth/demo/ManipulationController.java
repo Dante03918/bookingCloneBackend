@@ -11,10 +11,9 @@ import securitybasicauth.demo.models.RegisterUserModel;
 import securitybasicauth.demo.repositories.AccommodationRepo;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
 import securitybasicauth.demo.repositories.ReservationsRepo;
+import securitybasicauth.demo.utils.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -76,7 +75,6 @@ public class ManipulationController {
     }
 
 
-
     @PostMapping("/book")
     public ResponseEntity bookAccommodation(@RequestBody DatesModel dates) {
 
@@ -90,30 +88,16 @@ public class ManipulationController {
 
         List<DatesModel> reservations = accommodationsModel.getReservations();
 
+        ResponseEntity responseEntity = new DateUtils().periodValidation(dates, reservations);
 
-        if (reservations.size() == 0) {
-
+        if(responseEntity.getBody().toString().equals("toSave")){
             reservationsRepo.save(dates);
-
-            reservations.add(dates);
             return new ResponseEntity("Reserved", HttpStatus.OK);
-        } else {
-            for (DatesModel model : reservations) {
-                Date startDate = model.getStartDate();
-                Date endDate = model.getEndDate();
+        } else
+            return responseEntity;
 
-                if ((dates.getStartDate().after(startDate)) &&
-                        (dates.getStartDate().before(endDate)) ||
-                        (dates.getEndDate().after(startDate)) &&
-                                (dates.getEndDate().before(endDate))) {
-                    return new ResponseEntity("Term already booked", HttpStatus.OK);
-                } else {
-                    reservationsRepo.save(dates);
-                    reservations.add(dates);
-                    return new ResponseEntity("Reserved", HttpStatus.OK);
-                }
-            }
-        }
-        return null;
+
+
     }
+
 }

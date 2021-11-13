@@ -7,7 +7,7 @@ import securitybasicauth.demo.models.RegisterUserModel;
 
 
 @Repository
-public interface RegisterUserRepo extends JpaRepository<RegisterUserModel, Integer> {
+public interface RegisterUserRepo extends CrudRepository<RegisterUserModel, Integer> {
 
     @Override
     <S extends RegisterUserModel> S save(S s);
