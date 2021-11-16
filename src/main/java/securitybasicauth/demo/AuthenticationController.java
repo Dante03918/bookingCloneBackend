@@ -15,6 +15,7 @@ import securitybasicauth.demo.models.LoginUserModel;
 import securitybasicauth.demo.models.RegisterUserModel;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
 
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 public class AuthenticationController {
 
@@ -48,6 +49,7 @@ public class AuthenticationController {
         }
     }
 
+
     private boolean authenticate(String email, String password) throws Exception {
         try{
           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
@@ -76,7 +78,7 @@ public class AuthenticationController {
             httpStatus = HttpStatus.BAD_REQUEST;
         }
 
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 
 

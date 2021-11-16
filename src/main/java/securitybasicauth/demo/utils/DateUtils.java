@@ -17,14 +17,14 @@ public class DateUtils {
     ReservationsRepo reservationsRepo;
 
 
-    public ResponseEntity periodValidation(DatesModel datesModel, List<DatesModel> datesModelList) {
+    public ResponseEntity<?> periodValidation(DatesModel datesModel, List<DatesModel> datesModelList) {
 
 
         if ((datesModel.getStartDate().compareTo(new Date(System.currentTimeMillis())) > 0) &&
                 (datesModel.getStartDate().compareTo(datesModel.getEndDate()) <= 0)) {
             if (datesModelList.size() == 0) {
 
-                return new ResponseEntity("toSave", HttpStatus.OK);
+                return new ResponseEntity<>("toSave", HttpStatus.OK);
 
 
             } else {
@@ -38,18 +38,18 @@ public class DateUtils {
                             (datesModel.getStartDate().compareTo(endDate) <= 0) ||
                             (datesModel.getEndDate().compareTo(startDate) <= 0) &&
                                     (datesModel.getEndDate().compareTo(endDate) <= 0)) {
-                        return new ResponseEntity("Term already booked", HttpStatus.OK);
+                        return new ResponseEntity<>("Term already booked", HttpStatus.OK);
                     } else {
-                        return new ResponseEntity("toSave", HttpStatus.OK);
+                        return new ResponseEntity<>("toSave", HttpStatus.OK);
 
                     }
                 }
-                return new ResponseEntity("Chuj wie co sie stalo", HttpStatus.OK);
+                return new ResponseEntity<>("Unknown error", HttpStatus.NOT_FOUND);
             }
 
         } else
 
-            return new ResponseEntity("Data poczatkowa musi byc przynajmniej od jutra a koncowa pozniejsza od poczatkowej", HttpStatus.OK);
+            return new ResponseEntity<>("First date after second or first date before now", HttpStatus.TOO_EARLY);
 
     }
 }

@@ -15,7 +15,9 @@ import securitybasicauth.demo.utils.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Objects;
 
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 public class ManipulationController {
 
@@ -35,11 +37,11 @@ public class ManipulationController {
     @ResponseBody
     public ResponseEntity<?> getAccommodations() {
 
-        return new ResponseEntity(registerUserRepo.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(registerUserRepo.findAll(), HttpStatus.OK);
     }
 
     @PostMapping("/addAccommodation")
-    public ResponseEntity addAccommodation(HttpServletRequest request, @RequestBody AccommodationsModel accommodationsModel) {
+    public ResponseEntity<?> addAccommodation(HttpServletRequest request, @RequestBody AccommodationsModel accommodationsModel) {
         String token = request.getHeader("Authorization");
 
         RegisterUserModel registerUserModel;
@@ -66,7 +68,7 @@ public class ManipulationController {
 
 
     @DeleteMapping("/removeAccommodation")
-    public ResponseEntity removeAccommodation(@RequestParam(name = "email") String email, @RequestParam(name = "id") int id) {
+    public ResponseEntity<?> removeAccommodation(@RequestParam(name = "email") String email, @RequestParam(name = "id") int id) {
 
         accommodationRepo.deleteById(id);
 
@@ -76,26 +78,30 @@ public class ManipulationController {
 
 
     @PostMapping("/book")
-    public ResponseEntity bookAccommodation(@RequestBody DatesModel dates) {
+    public ResponseEntity<?> bookAccommodation(@RequestBody DatesModel dates) {
 
         AccommodationsModel accommodationsModel = new AccommodationsModel();
 
         try {
-            accommodationsModel = accommodationRepo.findById(dates.getAccommodationId()).get();
+            accommodationsModel = accommodationRepo
+                                        .findById(dates
+                                        .getAccommodationId())
+                                        .orElse(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        List<DatesModel> reservations = Objects.requireNonNull(accommodationsModel).getReservations();
 
-        List<DatesModel> reservations = accommodationsModel.getReservations();
 
-        ResponseEntity responseEntity = new DateUtils().periodValidation(dates, reservations);
 
-        if(responseEntity.getBody().toString().equals("toSave")){
+
+        ResponseEntity<?> responseEntity = new DateUtils().periodValidation(dates, reservations);
+
+        if (Objects.requireNonNull(responseEntity.getBody()).toString().equals("toSave")) {
             reservationsRepo.save(dates);
-            return new ResponseEntity("Reserved", HttpStatus.OK);
+            return new ResponseEntity<>("Reserved", HttpStatus.OK);
         } else
             return responseEntity;
-
 
 
     }
