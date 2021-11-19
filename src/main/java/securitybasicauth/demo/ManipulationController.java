@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
-@CrossOrigin(origins = "http://195.242.134.150:80", maxAge = 3600)
+@CrossOrigin(origins = "https://dante03918.github.io/booking-clone-front:80", maxAge = 3600)
 @RestController
 public class ManipulationController {
 
