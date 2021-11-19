@@ -40,6 +40,11 @@ public class ManipulationController {
         return new ResponseEntity<>(registerUserRepo.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/test")
+    public String test(){
+        return "test";
+    }
+
     @PostMapping("/addAccommodation")
     public ResponseEntity<?> addAccommodation(HttpServletRequest request, @RequestBody AccommodationsModel accommodationsModel) {
         String token = request.getHeader("Authorization");
