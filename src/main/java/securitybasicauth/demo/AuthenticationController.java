@@ -1,6 +1,5 @@
 package securitybasicauth.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,23 +18,22 @@ import securitybasicauth.demo.repositories.RegisterUserRepo;
 @RestController
 public class AuthenticationController {
 
-    @Autowired
-    RegisterUserRepo registerUserRepo;
+    private final RegisterUserRepo registerUserRepo;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    public AuthenticationController(RegisterUserRepo registerUserRepo, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtTokenUtil jwtTokenUtil) {
+        this.registerUserRepo = registerUserRepo;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @Bean
     PasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
 
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {

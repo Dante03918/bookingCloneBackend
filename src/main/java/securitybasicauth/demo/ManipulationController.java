@@ -1,7 +1,5 @@
 package securitybasicauth.demo;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +19,19 @@ import java.util.Objects;
 @RestController
 public class ManipulationController {
 
-    @Autowired
-    AccommodationRepo accommodationRepo;
+    private final AccommodationRepo accommodationRepo;
+    private final RegisterUserRepo registerUserRepo;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final ReservationsRepo reservationsRepo;
+    private final DateUtils dateUtils;
 
-    @Autowired
-    RegisterUserRepo registerUserRepo;
-
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    ReservationsRepo reservationsRepo;
+    public ManipulationController(AccommodationRepo accommodationRepo, RegisterUserRepo registerUserRepo, JwtTokenUtil jwtTokenUtil, ReservationsRepo reservationsRepo, DateUtils dateUtils) {
+        this.accommodationRepo = accommodationRepo;
+        this.registerUserRepo = registerUserRepo;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.reservationsRepo = reservationsRepo;
+        this.dateUtils = dateUtils;
+    }
 
     @GetMapping("/")
     @ResponseBody
@@ -41,7 +41,7 @@ public class ManipulationController {
     }
 
     @GetMapping("/test")
-    public String test(){
+    public String test() {
         return "test";
     }
 
@@ -73,7 +73,7 @@ public class ManipulationController {
 
 
     @DeleteMapping("/removeAccommodation")
-    public ResponseEntity<?> removeAccommodation(@RequestParam(name = "email") String email, @RequestParam(name = "id") int id) {
+    public ResponseEntity<?> removeAccommodation(@RequestParam(name = "id") int id) {
 
         accommodationRepo.deleteById(id);
 
@@ -89,26 +89,21 @@ public class ManipulationController {
 
         try {
             accommodationsModel = accommodationRepo
-                                        .findById(dates
-                                        .getAccommodationId())
-                                        .orElse(null);
+                    .findById(dates
+                            .getAccommodationId())
+                    .orElse(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
         List<DatesModel> reservations = Objects.requireNonNull(accommodationsModel).getReservations();
 
-
-
-
-        ResponseEntity<?> responseEntity = new DateUtils().periodValidation(dates, reservations);
+        ResponseEntity<?> responseEntity = dateUtils.periodValidation(dates, reservations);
 
         if (Objects.requireNonNull(responseEntity.getBody()).toString().equals("toSave")) {
             reservationsRepo.save(dates);
             return new ResponseEntity<>("Reserved", HttpStatus.OK);
         } else
             return responseEntity;
-
-
     }
 
 }

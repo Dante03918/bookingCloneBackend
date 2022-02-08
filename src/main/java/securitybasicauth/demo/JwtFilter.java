@@ -31,11 +31,14 @@ import static io.jsonwebtoken.Jwts.parser;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
+   private final UserDetailsServiceImpl userDetailsService;
+   private final JwtTokenUtil tokenUtil;
 
-    @Autowired
-    JwtTokenUtil tokenUtil;
+  @Autowired
+  public JwtFilter(JwtTokenUtil tokenUtil, UserDetailsServiceImpl userDetailsService){
+      this.tokenUtil = tokenUtil;
+      this.userDetailsService = userDetailsService;
+  }
 
 
     @Override

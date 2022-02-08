@@ -12,20 +12,20 @@ import java.util.List;
 
 @Component
 public class DateUtils {
+    private final ReservationsRepo reservationsRepo;
 
     @Autowired
-    ReservationsRepo reservationsRepo;
-
+    public DateUtils(ReservationsRepo reservationsRepo) {
+        this.reservationsRepo = reservationsRepo;
+    }
 
     public ResponseEntity<?> periodValidation(DatesModel datesModel, List<DatesModel> datesModelList) {
-
 
         if ((datesModel.getStartDate().compareTo(new Date(System.currentTimeMillis())) > 0) &&
                 (datesModel.getStartDate().compareTo(datesModel.getEndDate()) <= 0)) {
             if (datesModelList.size() == 0) {
 
                 return new ResponseEntity<>("toSave", HttpStatus.OK);
-
 
             } else {
 
@@ -46,10 +46,7 @@ public class DateUtils {
                 }
                 return new ResponseEntity<>("Unknown error", HttpStatus.NOT_FOUND);
             }
-
         } else
-
             return new ResponseEntity<>("First date after second or first date before now", HttpStatus.TOO_EARLY);
-
     }
 }
