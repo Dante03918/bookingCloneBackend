@@ -1,5 +1,6 @@
 package securitybasicauth.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import securitybasicauth.demo.models.LoginUserModel;
 import securitybasicauth.demo.models.RegisterUserModel;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
@@ -18,16 +20,20 @@ import securitybasicauth.demo.repositories.RegisterUserRepo;
 @RestController
 public class AuthenticationController {
 
+
     private final RegisterUserRepo registerUserRepo;
     private final AuthenticationManager authenticationManager;
-    private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
+    private PasswordEncoder passwordEncoder;
 
-    public AuthenticationController(RegisterUserRepo registerUserRepo, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, JwtTokenUtil jwtTokenUtil) {
+    public AuthenticationController(RegisterUserRepo registerUserRepo, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil) {
         this.registerUserRepo = registerUserRepo;
         this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
         this.jwtTokenUtil = jwtTokenUtil;
+    }
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder){            // passwordEncoder injected with constructor causes circular dependency exception
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -39,18 +45,18 @@ public class AuthenticationController {
     public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {
 
 
-        if(authenticate(loginUserModel.getEmail(), loginUserModel.getPassword())){
+        if(authenticate(loginUserModel)){
              String  token =  jwtTokenUtil.generateToken(loginUserModel.getEmail());
             return ResponseEntity.ok(token);
            } else {
-            return ResponseEntity.notFound().headers(HttpHeaders.EMPTY).build();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password is not correct");
         }
     }
 
+    private boolean authenticate(LoginUserModel loginUserModel) throws Exception {
 
-    private boolean authenticate(String email, String password) throws Exception {
         try{
-          authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+          authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserModel.getEmail(), loginUserModel.getPassword()));
             return true;
         } catch(BadCredentialsException badCredentialsException){
             throw new Exception("Bad Credentials", badCredentialsException);

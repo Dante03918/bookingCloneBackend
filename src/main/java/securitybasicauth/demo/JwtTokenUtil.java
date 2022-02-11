@@ -29,7 +29,7 @@ public class JwtTokenUtil {
         return Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token).getBody();
     }
 
-    public String getUsernameFromToken(String token){
+    public String extractUsernameFromToken(String token){
          return getClaimsFromToken(token).getSubject();
     }
     public Date getExpirationDateFromToken(String token){
@@ -42,12 +42,12 @@ public class JwtTokenUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails){
-        String usernameFromToken = getUsernameFromToken(token);
+        String usernameFromToken = extractUsernameFromToken(token);
 
         return usernameFromToken.equals(userDetails.getUsername()) && !isExpired(token);
     }
     public Boolean validateToken(String token, String username){
-        String usernameFromToken = getUsernameFromToken(token);
+        String usernameFromToken = extractUsernameFromToken(token);
 
         return usernameFromToken.equals(username) && !isExpired(token);
     }

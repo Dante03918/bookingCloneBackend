@@ -12,6 +12,7 @@ import securitybasicauth.demo.repositories.ReservationsRepo;
 import securitybasicauth.demo.utils.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,18 +20,20 @@ import java.util.Objects;
 @RestController
 public class ManipulationController {
 
+    private final DataSource dataSource;
     private final AccommodationRepo accommodationRepo;
     private final RegisterUserRepo registerUserRepo;
     private final JwtTokenUtil jwtTokenUtil;
     private final ReservationsRepo reservationsRepo;
     private final DateUtils dateUtils;
 
-    public ManipulationController(AccommodationRepo accommodationRepo, RegisterUserRepo registerUserRepo, JwtTokenUtil jwtTokenUtil, ReservationsRepo reservationsRepo, DateUtils dateUtils) {
+    public ManipulationController(AccommodationRepo accommodationRepo, RegisterUserRepo registerUserRepo, JwtTokenUtil jwtTokenUtil, ReservationsRepo reservationsRepo, DateUtils dateUtils, DataSource dataSource) {
         this.accommodationRepo = accommodationRepo;
         this.registerUserRepo = registerUserRepo;
         this.jwtTokenUtil = jwtTokenUtil;
         this.reservationsRepo = reservationsRepo;
         this.dateUtils = dateUtils;
+        this.dataSource = dataSource;
     }
 
     @GetMapping("/")
@@ -52,7 +55,7 @@ public class ManipulationController {
         RegisterUserModel registerUserModel;
 
         String cleanToken = token.substring(7);
-        String username = jwtTokenUtil.getUsernameFromToken(cleanToken);
+        String username = jwtTokenUtil.extractUsernameFromToken(cleanToken);
         Boolean tokenIsValid = jwtTokenUtil.validateToken(cleanToken, username);
 
         if (tokenIsValid) {
@@ -79,6 +82,8 @@ public class ManipulationController {
 
         System.out.println(id);
         return ResponseEntity.ok().build();
+
+
     }
 
 
