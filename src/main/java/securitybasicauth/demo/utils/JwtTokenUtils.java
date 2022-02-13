@@ -1,4 +1,4 @@
-package securitybasicauth.demo;
+package securitybasicauth.demo.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import static securitybasicauth.demo.SecurityConst.SECRET;
 
 @Component
-public class JwtTokenUtil {
+public class JwtTokenUtils {
 
     public String generateToken(String subject) {
 

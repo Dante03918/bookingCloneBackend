@@ -1,22 +1,19 @@
-package securitybasicauth.demo;
+package securitybasicauth.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import securitybasicauth.demo.utils.JwtTokenUtils;
 import securitybasicauth.demo.models.LoginUserModel;
 import securitybasicauth.demo.models.RegisterUserModel;
 import securitybasicauth.demo.repositories.RegisterUserRepo;
 import securitybasicauth.demo.utils.RegisterModelValidation;
+import securitybasicauth.demo.Authentication;
 
 @CrossOrigin(origins = "/**", maxAge = 3600)
 @RestController
@@ -24,23 +21,23 @@ public class AuthenticationController {
 
 
     private final RegisterUserRepo registerUserRepo;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final Authentication authentication;
+    private final JwtTokenUtils jwtTokenUtils;
     private final RegisterModelValidation registerModelValidation;
     private PasswordEncoder passwordEncoder;
 
     public AuthenticationController(RegisterUserRepo registerUserRepo,
-                                    AuthenticationManager authenticationManager,
-                                    JwtTokenUtil jwtTokenUtil,
+                                    Authentication authentication,
+                                    JwtTokenUtils jwtTokenUtils,
                                     RegisterModelValidation registerModelValidation) {
         this.registerUserRepo = registerUserRepo;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.authentication = authentication;
+        this.jwtTokenUtils = jwtTokenUtils;
         this.registerModelValidation = registerModelValidation;
     }
 
     @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {            // passwordEncoder injected with constructor causes circular dependency exception
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {      // passwordEncoder injected with constructor causes circular dependency exception
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -52,22 +49,10 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {
 
-
-        if (authenticate(loginUserModel)) {
-            String token = jwtTokenUtil.generateToken(loginUserModel.getEmail());
-            return ResponseEntity.ok(token);
+        if (authentication.authenticate(loginUserModel)) {
+            return ResponseEntity.ok(jwtTokenUtils.generateToken(loginUserModel.getEmail()));
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username or password is not correct");
-        }
-    }
-
-    private boolean authenticate(LoginUserModel loginUserModel) throws Exception {
-
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUserModel.getEmail(), loginUserModel.getPassword()));
-            return true;
-        } catch (BadCredentialsException badCredentialsException) {
-            throw new Exception("Bad Credentials", badCredentialsException);
         }
     }
 

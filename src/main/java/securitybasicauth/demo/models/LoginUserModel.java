@@ -1,5 +1,8 @@
 package securitybasicauth.demo.models;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class LoginUserModel {
 
     private String email;

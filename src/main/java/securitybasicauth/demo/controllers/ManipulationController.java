@@ -1,8 +1,9 @@
-package securitybasicauth.demo;
+package securitybasicauth.demo.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import securitybasicauth.demo.utils.JwtTokenUtils;
 import securitybasicauth.demo.models.AccommodationsModel;
 import securitybasicauth.demo.models.DatesModel;
 import securitybasicauth.demo.models.RegisterUserModel;
@@ -23,14 +24,14 @@ public class ManipulationController {
     private final DataSource dataSource;
     private final AccommodationRepo accommodationRepo;
     private final RegisterUserRepo registerUserRepo;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtTokenUtils jwtTokenUtils;
     private final ReservationsRepo reservationsRepo;
     private final DateUtils dateUtils;
 
-    public ManipulationController(AccommodationRepo accommodationRepo, RegisterUserRepo registerUserRepo, JwtTokenUtil jwtTokenUtil, ReservationsRepo reservationsRepo, DateUtils dateUtils, DataSource dataSource) {
+    public ManipulationController(AccommodationRepo accommodationRepo, RegisterUserRepo registerUserRepo, JwtTokenUtils jwtTokenUtils, ReservationsRepo reservationsRepo, DateUtils dateUtils, DataSource dataSource) {
         this.accommodationRepo = accommodationRepo;
         this.registerUserRepo = registerUserRepo;
-        this.jwtTokenUtil = jwtTokenUtil;
+        this.jwtTokenUtils = jwtTokenUtils;
         this.reservationsRepo = reservationsRepo;
         this.dateUtils = dateUtils;
         this.dataSource = dataSource;
@@ -55,8 +56,8 @@ public class ManipulationController {
         RegisterUserModel registerUserModel;
 
         String cleanToken = token.substring(7);
-        String username = jwtTokenUtil.extractUsernameFromToken(cleanToken);
-        Boolean tokenIsValid = jwtTokenUtil.validateToken(cleanToken, username);
+        String username = jwtTokenUtils.extractUsernameFromToken(cleanToken);
+        Boolean tokenIsValid = jwtTokenUtils.validateToken(cleanToken, username);
 
         if (tokenIsValid) {
             registerUserModel = registerUserRepo.findByEmail(username);

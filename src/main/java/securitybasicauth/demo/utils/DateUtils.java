@@ -12,9 +12,9 @@ import java.util.List;
 
 @Component
 public class DateUtils {
+
     private final ReservationsRepo reservationsRepo;
 
-    @Autowired
     public DateUtils(ReservationsRepo reservationsRepo) {
         this.reservationsRepo = reservationsRepo;
     }
