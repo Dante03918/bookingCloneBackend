@@ -3,6 +3,7 @@ package securitybasicauth.demo.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import securitybasicauth.demo.utils.JwtTokenUtils;
 import securitybasicauth.demo.models.AccommodationsModel;
 import securitybasicauth.demo.models.DatesModel;
@@ -28,7 +29,13 @@ public class ManipulationController {
     private final ReservationsRepo reservationsRepo;
     private final DateUtils dateUtils;
 
-    public ManipulationController(AccommodationRepo accommodationRepo, RegisterUserRepo registerUserRepo, JwtTokenUtils jwtTokenUtils, ReservationsRepo reservationsRepo, DateUtils dateUtils, DataSource dataSource) {
+
+    public ManipulationController(AccommodationRepo accommodationRepo,
+                                  RegisterUserRepo registerUserRepo,
+                                  JwtTokenUtils jwtTokenUtils,
+                                  ReservationsRepo reservationsRepo,
+                                  DateUtils dateUtils,
+                                  DataSource dataSource) {
         this.accommodationRepo = accommodationRepo;
         this.registerUserRepo = registerUserRepo;
         this.jwtTokenUtils = jwtTokenUtils;
@@ -44,13 +51,8 @@ public class ManipulationController {
         return new ResponseEntity<>(registerUserRepo.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "test";
-    }
-
     @PostMapping("/addAccommodation")
-    public ResponseEntity<?> addAccommodation(HttpServletRequest request, @RequestBody AccommodationsModel accommodationsModel) {
+    public ResponseStatusException addAccommodation(HttpServletRequest request, @RequestBody AccommodationsModel accommodationsModel) {
         String token = request.getHeader("Authorization");
 
         RegisterUserModel registerUserModel;
@@ -69,21 +71,19 @@ public class ManipulationController {
 
             registerUserModel.getAccommodations().add(accommodationsModel);
 
-            return ResponseEntity.ok("Ad added");
+            return new ResponseStatusException(HttpStatus.OK, "Room added");
         } else {
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is not valid");
         }
     }
 
 
     @DeleteMapping("/removeAccommodation")
-    public ResponseEntity<?> removeAccommodation(@RequestParam(name = "id") int id) {
+    public ResponseStatusException removeAccommodation(@RequestParam(name = "id") int id) {
 
         accommodationRepo.deleteById(id);
 
-        System.out.println(id);
-        return ResponseEntity.ok().build();
-
+        return new ResponseStatusException(HttpStatus.OK, "Advertisement deleted");
 
     }
 
