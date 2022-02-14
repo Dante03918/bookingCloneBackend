@@ -13,6 +13,7 @@ import securitybasicauth.demo.repositories.RegisterUserRepo;
 import securitybasicauth.demo.repositories.ReservationsRepo;
 import securitybasicauth.demo.utils.DateUtils;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.util.List;
@@ -89,27 +90,27 @@ public class ManipulationController {
 
 
     @PostMapping("/book")
-    public ResponseEntity<?> bookAccommodation(@RequestBody DatesModel dates) {
+    public ResponseStatusException bookAccommodation(@RequestBody DatesModel dates) {
 
-        AccommodationsModel accommodationsModel = new AccommodationsModel();
+        AccommodationsModel accommodationsModel;
 
         try {
             accommodationsModel = accommodationRepo
                     .findById(dates
                             .getAccommodationId())
                     .orElse(null);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (EntityNotFoundException e) {
+            return new ResponseStatusException(HttpStatus.NOT_FOUND, "Ad not found. Probably was deleted or never added");
         }
         List<DatesModel> reservations = Objects.requireNonNull(accommodationsModel).getReservations();
 
-        ResponseEntity<?> responseEntity = dateUtils.periodValidation(dates, reservations);
+        String errorMessage = dateUtils.periodValidation(dates, reservations).getMessage();
 
-        if (Objects.requireNonNull(responseEntity.getBody()).toString().equals("toSave")) {
+        if (errorMessage.equals("toSave")) {
             reservationsRepo.save(dates);
-            return new ResponseEntity<>("Reserved", HttpStatus.OK);
+            return new ResponseStatusException( HttpStatus.OK, "Reserved");
         } else
-            return responseEntity;
+            return new ResponseStatusException(HttpStatus.MULTI_STATUS, errorMessage);
     }
 
 }
