@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import securitybasicauth.demo.dtos.AccommodationDTO;
 import securitybasicauth.demo.utils.JwtTokenUtils;
 import securitybasicauth.demo.models.AccommodationsModel;
 import securitybasicauth.demo.models.DatesModel;
@@ -15,7 +16,6 @@ import securitybasicauth.demo.utils.DateUtils;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,12 +23,12 @@ import java.util.Objects;
 @RestController
 public class ManipulationController {
 
-    private final DataSource dataSource;
     private final AccommodationRepo accommodationRepo;
     private final RegisterUserRepo registerUserRepo;
     private final JwtTokenUtils jwtTokenUtils;
     private final ReservationsRepo reservationsRepo;
     private final DateUtils dateUtils;
+    private final AccommodationDTO accommodationDTO;
 
 
     public ManipulationController(AccommodationRepo accommodationRepo,
@@ -36,20 +36,27 @@ public class ManipulationController {
                                   JwtTokenUtils jwtTokenUtils,
                                   ReservationsRepo reservationsRepo,
                                   DateUtils dateUtils,
-                                  DataSource dataSource) {
+                                  AccommodationDTO accommodationDTO) {
         this.accommodationRepo = accommodationRepo;
         this.registerUserRepo = registerUserRepo;
         this.jwtTokenUtils = jwtTokenUtils;
         this.reservationsRepo = reservationsRepo;
         this.dateUtils = dateUtils;
-        this.dataSource = dataSource;
+        this.accommodationDTO = accommodationDTO;
     }
 
     @GetMapping("/")
     @ResponseBody
     public ResponseEntity<?> getAccommodations() {
 
-        return new ResponseEntity<>(registerUserRepo.findAll(), HttpStatus.OK);
+        List<RegisterUserModel> usersEntities = (List<RegisterUserModel>) registerUserRepo.findAll();
+
+        if(usersEntities.size() == 0)
+            return new ResponseEntity<>("Database is empty", HttpStatus.OK);
+        else{
+            return new ResponseEntity<>(accommodationDTO.getAccommodationsFromUserModel((List<RegisterUserModel>)registerUserRepo.findAll()), HttpStatus.OK);
+        }
+
     }
 
     @PostMapping("/addAccommodation")
