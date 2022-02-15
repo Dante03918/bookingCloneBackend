@@ -47,7 +47,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) throws Exception {
+    public ResponseEntity<?> logIn(@RequestBody LoginUserModel loginUserModel) {
 
         if (authentication.authenticate(loginUserModel)) {
             return ResponseEntity.ok(jwtTokenUtils.generateToken(loginUserModel.getEmail()));

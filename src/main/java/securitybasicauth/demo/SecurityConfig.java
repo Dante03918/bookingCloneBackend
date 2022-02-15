@@ -6,31 +6,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsServiceImpl userDetailsService;
     private final JwtFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(UserDetailsServiceImpl userDetailsService, JwtFilter jwtFilter){
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(JwtFilter jwtFilter){
         this.jwtFilter = jwtFilter;
     }
-
-//    @Autowired
-//    PasswordEncoder passwordEncoder;
-
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

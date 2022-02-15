@@ -6,6 +6,4 @@ import securitybasicauth.demo.models.DatesModel;
 
 @Repository
 public interface ReservationsRepo extends CrudRepository<DatesModel, Integer> {
-
-
 }

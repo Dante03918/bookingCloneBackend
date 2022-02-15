@@ -20,7 +20,6 @@ public class RegisterUserModel {
     @JoinColumn(name = "ownerId")
     private List<AccommodationsModel> accommodations;
 
-
     public List<AccommodationsModel> getAccommodations() {
         return accommodations;
     }
